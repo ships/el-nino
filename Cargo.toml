@@ -1,0 +1,8 @@
+[package]
+name = "el-nino"
+version = "0.1.0"
+authors = ["Eve <eve@haut-kultur.org>"]
+edition = "2018"
+
+[dependencies]
+ridb-client = { git = "https://github.com/ships/ridb" }
