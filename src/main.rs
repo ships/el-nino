@@ -1,40 +1,35 @@
-extern crate ridb_client;
 extern crate futures;
 
-use ridb_client::apis::*;
+mod clients;
+mod errors;
+
+use errors::*;
 
 fn main() {
-    let api_key : String = match std::env::var("RIDB_API_KEY") {
-        Ok(val) => val,
-        Err(e) => panic!("no api key: {}", e),
-    };
-
-    let api_key_struct = configuration::ApiKey{
-        prefix: None,
-        key: api_key,
-    };
-
-    let mut config = configuration::Configuration::new();
-
-    config.api_key = Some(api_key_struct);
-
-    let c = client::APIClient::new(config);
+    let c = clients::def_client();
     let p = c.permit_entrances_api();
 
-    let permit_entr_id = "376";
-    let res = p.get_permit_entrance(&permit_entr_id);
+    let res = p.get_permit_entrances(0,0);
 
     match res {
-      Ok(ent) => println!("Got body: "),
+      Ok(ent) => println!("Got ids: {}", body_str(ent)),
       Err(e) => println!("Got error: {}", error_str(e)),
     }
 
     println!("Done!");
 }
 
-fn error_str(e: ridb_client::apis::Error) -> String {
-    return match e {
-        ridb_client::apis::Error::Reqwest(e) => format!("uri error: {}", e),
-        ridb_client::apis::Error::Serde(e) => format!("encoding error: {}", e),
+fn body_str(r: ridb_client::models::InlineResponse2006) -> String {
+    match r.RECDATA() {
+        None => return String::from("none!"),
+        Some(v) => {
+            let vec: Vec<_> = v.into_iter().map(|x| format!("id: {}, desc: {}\n", x.facility_id(),x.permit_entrance_name())).collect();
+            return format!("{:?}", vec)
+        }
     }
+}
+
+struct Relay{}
+
+impl Relay {
 }

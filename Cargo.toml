@@ -7,4 +7,8 @@ edition = "2018"
 [dependencies]
 futures = "*"
 ridb-client = { git = "https://github.com/ships/ridb" }
+ridb-client-extras = { git = "https://github.com/ships/ridb-etc" }
 # ridb-client = { path = "../ridb" }
+
+[dev-dependencies]
+double = "*"
